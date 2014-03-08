@@ -3,12 +3,10 @@ using System.Collections;
 
 public class BoidFlocking : MonoBehaviour
 {
-    private GameObject Controller;
-    private bool inited = false;
-    private float minVelocity;
-    private float maxVelocity;
-    private float randomness;
-    private GameObject chasee;
+    public float minVelocity = 5;
+    public float maxVelocity = 20;
+    public float randomness = 1;
+    public float range = int.MaxValue;
 
     void Start()
     {
@@ -19,20 +17,17 @@ public class BoidFlocking : MonoBehaviour
     {
         while (true)
         {
-            if (inited)
-            {
-                rigidbody.velocity = rigidbody.velocity + Calc() * Time.deltaTime;
+            rigidbody.velocity = rigidbody.velocity + CalcVelocity() * Time.deltaTime;
 
-                // enforce minimum and maximum speeds for the boids
-                float speed = rigidbody.velocity.magnitude;
-                if (speed > maxVelocity)
-                {
-                    rigidbody.velocity = rigidbody.velocity.normalized * maxVelocity;
-                }
-                else if (speed < minVelocity)
-                {
-                    rigidbody.velocity = rigidbody.velocity.normalized * minVelocity;
-                }
+            // Enforce minimum and maximum speeds for the boids
+            float speed = rigidbody.velocity.magnitude;
+            if (speed > maxVelocity)
+            {
+                rigidbody.velocity = rigidbody.velocity.normalized * maxVelocity;
+            }
+            else if (speed < minVelocity)
+            {
+                rigidbody.velocity = rigidbody.velocity.normalized * minVelocity;
             }
 
             float waitTime = Random.Range(0.3f, 0.5f);
@@ -40,39 +35,18 @@ public class BoidFlocking : MonoBehaviour
         }
     }
 
-    private Vector3 Calc()
+    private Vector3 CalcVelocity()
     {
         Vector3 randomize = new Vector3((Random.value * 2) - 1, (Random.value * 2) - 1, (Random.value * 2) - 1);
         randomize.Normalize();
 
-        BoidController boidController = Controller.GetComponent<BoidController>();
+        FlockKeeper boidController = GetComponent<FlockKeeper>();
         Vector3 flockCenter = boidController.flockCenter;
         Vector3 flockVelocity = boidController.flockVelocity;
-        Vector3 follow;
-        if (chasee != null)
-        {
-            follow = chasee.transform.localPosition;
-        }
-        else
-        {
-            follow = flockCenter;
-        }
 
         flockCenter = flockCenter - transform.localPosition;
         flockVelocity = flockVelocity - rigidbody.velocity;
-        follow = follow - transform.localPosition;
 
-        return (flockCenter + flockVelocity + follow * 2 + randomize * randomness);
-    }
-
-    public void SetController(GameObject theController)
-    {
-        Controller = theController;
-        BoidController boidController = Controller.GetComponent<BoidController>();
-        minVelocity = boidController.minVelocity;
-        maxVelocity = boidController.maxVelocity;
-        randomness = boidController.randomness;
-        chasee = boidController.chasee;
-        inited = true;
+        return (flockCenter + flockVelocity + randomize * randomness);
     }
 }

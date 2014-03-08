@@ -83,6 +83,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 229111685}
   - 114: {fileID: 229111684}
+  - 114: {fileID: 229111686}
   m_Layer: 0
   m_Name: Main Controller
   m_TagString: Untagged
@@ -101,7 +102,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 781d8d74f5ebf9047bb62f9c45c4d758, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 100000, guid: 0643b8edf800661438ebfc95a01f166f, type: 2}
+  prefab: {fileID: 100000, guid: beb6111dd8bc7d240961f7c1c7be0714, type: 2}
+  spawnRange: {x: 30, y: 30, z: 20}
+  spawnCount: 10
 --- !u!4 &229111685
 Transform:
   m_ObjectHideFlags: 0
@@ -109,10 +112,21 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 229111683}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 159.482803, y: 41.3974266, z: -203.394409}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+--- !u!114 &229111686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 229111683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c97d17a0a49d6ce4bbe2edd040377c8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &676752421
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,7 +201,6 @@ GameObject:
   - 92: {fileID: 990258210}
   - 124: {fileID: 990258209}
   - 81: {fileID: 990258208}
-  - 114: {fileID: 990258213}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -236,7 +249,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 20000
+  orthographic size: 60
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -256,18 +269,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
---- !u!114 &990258213
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 990258207}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45373341866ceb4448d16654cdd150bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  boidController: {fileID: 0}
 --- !u!1 &1865184024
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,7 +334,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1865184024}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100000, y: 100000, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 200}
+  m_LocalScale: {x: 300, y: 300, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
