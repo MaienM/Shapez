@@ -11,7 +11,6 @@ public class AdaptiveMusicController : MonoBehaviour {
 	void Start () {
 		InitialiseTracks();
 		PlayAll();
-		StartCoroutine(VolumeTest());
 	}
 
 	void InitialiseTracks() {
