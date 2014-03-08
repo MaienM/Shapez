@@ -1,37 +1,71 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BoidFlocking : MonoBehaviour
 {
     public float minVelocity = 5;
     public float maxVelocity = 20;
     public float randomness = 1;
-    public float range = int.MaxValue;
+    public float range = 10;
+    public float updateInterval = 1;
+
+    private Vector3 flockCenter;
+    private Vector3 flockVelocity;
+    private List<GameObject> boids = new List<GameObject>();
 
     void Start()
     {
-        StartCoroutine("BoidSteering");
+        StartCoroutine("FlockUpdater");
     }
 
-    IEnumerator BoidSteering()
+    IEnumerator FlockUpdater()
     {
         while (true)
         {
-            rigidbody.velocity = rigidbody.velocity + CalcVelocity() * Time.deltaTime;
+            UpdateFlock();
+            UpdateVelocity();
+            yield return new WaitForSeconds(updateInterval);
+        }
+    }
 
-            // Enforce minimum and maximum speeds for the boids
-            float speed = rigidbody.velocity.magnitude;
-            if (speed > maxVelocity)
+    private void UpdateFlock()
+    {
+        foreach (GameObject boid in GameObject.FindGameObjectsWithTag(tag))
+        {
+            if ((transform.position - boid.transform.position).magnitude <= range)
             {
-                rigidbody.velocity = rigidbody.velocity.normalized * maxVelocity;
+                boids.Add(boid);
             }
-            else if (speed < minVelocity)
-            {
-                rigidbody.velocity = rigidbody.velocity.normalized * minVelocity;
-            }
+        }
 
-            float waitTime = Random.Range(0.3f, 0.5f);
-            yield return new WaitForSeconds(waitTime);
+        int flockSize = boids.Count;
+        flockCenter = Vector3.zero;
+        flockVelocity = Vector3.zero;
+
+        foreach (GameObject boid in boids)
+        {
+            flockCenter += boid.transform.localPosition;
+            flockVelocity += boid.rigidbody.velocity;
+        }
+
+        flockCenter /= flockSize;
+        flockVelocity /= flockSize;
+    }
+
+    private void UpdateVelocity()
+    {
+        rigidbody.velocity = rigidbody.velocity + CalcVelocity() * Time.deltaTime;
+
+        // Enforce minimum and maximum speeds for the boids
+        float speed = rigidbody.velocity.magnitude;
+        if (speed > maxVelocity)
+        {
+            rigidbody.velocity = rigidbody.velocity.normalized * maxVelocity;
+        }
+        else if (speed < minVelocity)
+        {
+            rigidbody.velocity = rigidbody.velocity.normalized * minVelocity;
         }
     }
 
@@ -40,13 +74,9 @@ public class BoidFlocking : MonoBehaviour
         Vector3 randomize = new Vector3((Random.value * 2) - 1, (Random.value * 2) - 1, (Random.value * 2) - 1);
         randomize.Normalize();
 
-        FlockKeeper boidController = GetComponent<FlockKeeper>();
-        Vector3 flockCenter = boidController.flockCenter;
-        Vector3 flockVelocity = boidController.flockVelocity;
+        Vector3 center = flockCenter - transform.localPosition;
+        Vector3 velocity = flockVelocity - rigidbody.velocity;
 
-        flockCenter = flockCenter - transform.localPosition;
-        flockVelocity = flockVelocity - rigidbody.velocity;
-
-        return (flockCenter + flockVelocity + randomize * randomness);
+        return (center + velocity + randomize * randomness);
     }
 }
