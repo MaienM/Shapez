@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BoidMover : MonoBehaviour {
+public class ImageFlipping : MonoBehaviour {
     string prevDir;
     string currDir;
     Vector3 prevPos;
@@ -10,15 +10,15 @@ public class BoidMover : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
     {
-        prevPos = new Vector3(0,0,0);
-        currPos = rigidbody.position;
+        prevPos = rigidbody.position;
         prevDir = "right";
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
-        if (prevPos != new Vector3(0, 0, 0))
+        currPos = rigidbody.position;
+        if (prevPos != currPos)
         {
             // Check if the boid moved to the right of the left.
             float moved = currPos.x - prevPos.x;
@@ -34,9 +34,10 @@ public class BoidMover : MonoBehaviour {
             // Flip the image if needed.
             if (prevDir != currDir)
             {
-                rigidbody.transform.Rotate(Vector3.right);
+                transform.eulerAngles = new Vector3(0, 180, 0);
             }
         }
         prevPos = currPos;
+        prevDir = currDir;
 	}
 }
