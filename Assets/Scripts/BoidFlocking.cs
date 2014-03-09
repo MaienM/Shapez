@@ -25,13 +25,19 @@ public class BoidFlocking : MonoBehaviour
     public BoidColor color;
     public BoidShape shape;
 
-    private Vector3 flockCenter;
-    private Vector3 flockVelocity;
-    private List<GameObject> boids = new List<GameObject>();
+    public List<GameObject> boids = new List<GameObject>();
 
     void Start()
     {
         StartCoroutine("FlockUpdater");
+        StartCoroutine("VelocityUpdater");
+    }
+
+    void Update()
+    {
+        transform.position = new Vector3(transform.position.x,
+                                         transform.position.y,
+                                         0);
     }
 
     IEnumerator FlockUpdater()
@@ -39,39 +45,51 @@ public class BoidFlocking : MonoBehaviour
         while (true)
         {
             UpdateFlock();
+            yield return new WaitForSeconds(Constants.flockUpdateInterval);
+        }
+    }
+
+    IEnumerator VelocityUpdater()
+    {
+        while (true)
+        {
             UpdateVelocity();
-            yield return new WaitForSeconds(Constants.updateInterval);
+            yield return new WaitForSeconds(Constants.velocityUpdateInterval);
         }
     }
 
     private void UpdateFlock()
     {
         // Get all boids.
+        boids.Clear();
         foreach (GameObject boid in GameObject.FindGameObjectsWithTag(tag))
         {
             float distance = (transform.position - boid.transform.position).magnitude;
-            if (boid.rigidbody != null && distance <= Constants.flockRange)
+            // In range, not ourselves and not in an invalid state.
+            if (boid.rigidbody != null && boid != this && distance <= Constants.flockRange)
             {
-                boids.Add(boid);
+                // Add to list depending on color/shape match.
+                BoidFlocking bf = boid.GetComponent<BoidFlocking>();
+                if (shape == bf.shape)
+                {
+                    boids.Add(boid);
+                }
+                if (color == bf.color)
+                {
+                    boids.Add(boid);
+                }
+
+                if (boids.Count >= Constants.localFlockSize)
+                {
+                    break;
+                }
             }
         }
-
-        flockCenter = Vector3.zero;
-        flockVelocity = Vector3.zero;
-
-        foreach (GameObject boid in boids)
-        {
-            flockCenter += boid.transform.localPosition;
-            flockVelocity += boid.rigidbody.velocity;
-        }
-
-        flockCenter /= boids.Count;
-        flockVelocity /= boids.Count;
     }
 
     private void UpdateVelocity()
     {
-        rigidbody.velocity += CalcVelocity() * Time.deltaTime * Constants.pullForce;
+        rigidbody.velocity += (CalcToCenter() + CalcSeparation() + CalcMatchVelocity()) * Time.deltaTime;
 
         // Enforce minimum and maximum speeds for the boids
         float speed = rigidbody.velocity.magnitude;
@@ -85,14 +103,49 @@ public class BoidFlocking : MonoBehaviour
         }
     }
 
-    private Vector3 CalcVelocity()
+    private Vector3 CalcToCenter()
     {
-        Vector3 randomize = new Vector3((Random.value * 2) - 1, (Random.value * 2) - 1);
-        randomize.Normalize();
+        Vector3 flockCenter = Vector3.zero;
+        foreach (GameObject boid in boids)
+        {
+            if (!float.IsNaN(boid.transform.position.x))
+            {
+                flockCenter += boid.transform.position;
+            }
+        }
+        flockCenter /= Mathf.Min(1, boids.Count);
+        flockCenter -= transform.position;
+        return flockCenter;
+    }
 
-        Vector3 center = flockCenter - transform.localPosition;
-        Vector3 velocity = flockVelocity - rigidbody.velocity;
+    private Vector3 CalcSeparation()
+    {
+        Vector3 separation = Vector3.zero;
+        foreach (GameObject boid in boids)
+        {
+            Vector3 diff = boid.transform.position - transform.position;
+            if (diff.magnitude < 5)
+            {
+                separation -= diff;
+            }
+        }
+        return separation;
+    }
 
-        return (center + velocity + randomize * Constants.randomness);
+    private Vector3 CalcMatchVelocity()
+    {
+        Vector3 flockVelocity = Vector3.zero;
+        foreach (GameObject boid in boids)
+        {
+            if (!float.IsNaN(boid.rigidbody.velocity.x))
+            {
+                flockVelocity += boid.rigidbody.velocity;
+            }
+        }
+        flockVelocity /= Mathf.Min(1, boids.Count);
+        flockVelocity -= rigidbody.velocity;
+        flockVelocity /= 8;
+        return flockVelocity;
     }
 }
+
