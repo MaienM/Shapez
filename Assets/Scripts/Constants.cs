@@ -7,4 +7,8 @@
     public static float flockRange = 10;
     public static int flockSize = 15;
     public static float updateInterval = 1;
+
+	// User Input
+	public static float AttractionSpeed = 5f;
+	public static float AreaOfAttraction = 3f;
 }
