@@ -2,7 +2,9 @@
 using System.Collections;
 
 public class BirdFlapping : MonoBehaviour {
-    private float pos;
+    
+	public float FlappingMultiplier = 10f;
+	private float pos;
 
 	// Use this for initialization
 	void Start () 
@@ -14,6 +16,6 @@ public class BirdFlapping : MonoBehaviour {
 	void Update () 
     {
         pos += Time.deltaTime;
-        transform.localScale += new Vector3(0, Mathf.Sin(pos) * -0.003f, 0);
+		transform.localScale += new Vector3(0, Mathf.Sin(FlappingMultiplier*pos) * -0.003f, 0);
 	}
 }
