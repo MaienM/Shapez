@@ -2,15 +2,28 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public enum BoidColor 
+{
+    PURPLE,
+    GREEN,
+    ORANGE,
+    PINK,
+    BLUE,
+}
+
+public enum BoidShape 
+{
+    TRIANGLE,
+    SQUARE,
+    RECTANGLE,
+    CIRCLE,
+    PENTAGON,
+}
+
 public class BoidFlocking : MonoBehaviour
 {
-    public float minVelocity = 5;
-    public float maxVelocity = 20;
-    public float pullForce = 1;
-    public float randomness = 1;
-    public float flockRange = 10;
-    public int flockSize = 15;
-    public float updateInterval = 1;
+    public BoidColor color;
+    public BoidShape shape;
 
     private Vector3 flockCenter;
     private Vector3 flockVelocity;
@@ -27,7 +40,7 @@ public class BoidFlocking : MonoBehaviour
         {
             UpdateFlock();
             UpdateVelocity();
-            yield return new WaitForSeconds(updateInterval);
+            yield return new WaitForSeconds(Constants.updateInterval);
         }
     }
 
@@ -37,7 +50,7 @@ public class BoidFlocking : MonoBehaviour
         foreach (GameObject boid in GameObject.FindGameObjectsWithTag(tag))
         {
             float distance = (transform.position - boid.transform.position).magnitude;
-            if (boid.rigidbody != null && distance <= flockRange)
+            if (boid.rigidbody != null && distance <= Constants.flockRange)
             {
                 boids.Add(boid);
             }
@@ -58,17 +71,17 @@ public class BoidFlocking : MonoBehaviour
 
     private void UpdateVelocity()
     {
-        rigidbody.velocity += CalcVelocity() * Time.deltaTime * pullForce;
+        rigidbody.velocity += CalcVelocity() * Time.deltaTime * Constants.pullForce;
 
         // Enforce minimum and maximum speeds for the boids
         float speed = rigidbody.velocity.magnitude;
-        if (speed > maxVelocity)
+        if (speed > Constants.maxVelocity)
         {
-            rigidbody.velocity = rigidbody.velocity.normalized * maxVelocity;
+            rigidbody.velocity = rigidbody.velocity.normalized * Constants.maxVelocity;
         }
-        else if (speed < minVelocity)
+        else if (speed < Constants.minVelocity)
         {
-            rigidbody.velocity = rigidbody.velocity.normalized * minVelocity;
+            rigidbody.velocity = rigidbody.velocity.normalized * Constants.minVelocity;
         }
     }
 
@@ -80,6 +93,6 @@ public class BoidFlocking : MonoBehaviour
         Vector3 center = flockCenter - transform.localPosition;
         Vector3 velocity = flockVelocity - rigidbody.velocity;
 
-        return (center + velocity + randomize * randomness);
+        return (center + velocity + randomize * Constants.randomness);
     }
 }
