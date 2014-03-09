@@ -9,6 +9,8 @@ public class TrackController : MonoBehaviour {
 	public void SetTrack(AudioClip TrackClip) {
 		AudioSourceObject = new GameObject("MusicTrackObject");
 		TrackSource = (AudioSource)AudioSourceObject.AddComponent("AudioSource");
+		TrackSource.transform.parent = transform;
+		TrackSource.transform.position = Camera.main.transform.position;
 		TrackSource.clip = TrackClip;
 		TrackSource.playOnAwake = false;
 		TrackSource.loop = true;
@@ -35,7 +37,7 @@ public class TrackController : MonoBehaviour {
 			Volume = 0f;
 		else if(Volume > 1f)
 			Volume = 1f;
-		float absoluteVolumeDifference = Mathf.Abs(Volume - TrackSource.volume);
+		//float absoluteVolumeDifference = Mathf.Abs(Volume - TrackSource.volume);
 		StopCoroutine("TweenVolume");
 		StartCoroutine(TweenVolume(Tweens.InOutQuint, Volume, FadeDuration));
 	}

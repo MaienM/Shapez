@@ -4,13 +4,15 @@ using System.Collections;
 public class AdaptiveMusicController : MonoBehaviour {
 
 	public AudioClip[] TrackClips;
+	public bool AutoPlay = false;
 
 	private GameObject[] TrackControllerObjects;
 	private TrackController[] TrackControllers;
 	
 	void Start () {
 		InitialiseTracks();
-		PlayAll();
+		if(AutoPlay)
+			PlayAll();
 	}
 
 	void InitialiseTracks() {
@@ -18,6 +20,7 @@ public class AdaptiveMusicController : MonoBehaviour {
 		TrackControllers		= new TrackController[TrackClips.Length];
 		for(int i = 0; i < TrackClips.Length; i++) {
 			TrackControllerObjects[i] = new GameObject("TrackController");
+			TrackControllerObjects[i].transform.parent = transform;
 			TrackControllers[i] = (TrackController)TrackControllerObjects[i].AddComponent("TrackController");
 			TrackControllers[i].SetTrack(TrackClips[i]);
 		}
