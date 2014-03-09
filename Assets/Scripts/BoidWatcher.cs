@@ -6,6 +6,8 @@ public class BoidWatcher : MonoBehaviour
     public float positionEase = 0.99f;
     public float sizeEase = 0.99f;
     public float borderPct = 0.2f;
+    public int minSize = 20;
+    public int maxSize = 100;
 	
 	void Update() 
     {
@@ -40,6 +42,6 @@ public class BoidWatcher : MonoBehaviour
 
         float oldSize = Camera.main.orthographicSize;
         float newSize = Mathf.Max(maxX - minX, maxY - minY, 0) * (0.5f + borderPct / 2);
-        Camera.main.orthographicSize = oldSize * sizeEase + newSize * (1 - sizeEase);
+        Camera.main.orthographicSize = Mathf.Clamp(oldSize * sizeEase + newSize * (1 - sizeEase), minSize, maxSize);
 	}
 }
