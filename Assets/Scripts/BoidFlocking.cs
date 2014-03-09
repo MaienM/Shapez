@@ -64,8 +64,8 @@ public class BoidFlocking : MonoBehaviour
         boids.Clear();
         foreach (GameObject boid in GameObject.FindGameObjectsWithTag(tag))
         {
-            float distance = (transform.position - boid.transform.position).magnitude;
             // In range, not ourselves and not in an invalid state.
+            float distance = (transform.position - boid.transform.position).magnitude;
             if (boid.rigidbody != null && boid != this && distance <= Constants.flockRange)
             {
                 // Add to list depending on color/shape match.
@@ -106,14 +106,15 @@ public class BoidFlocking : MonoBehaviour
     private Vector3 CalcToCenter()
     {
         Vector3 flockCenter = Vector3.zero;
+        if (boids.Count == 0)
+        {
+            return flockCenter;
+        }
         foreach (GameObject boid in boids)
         {
-            if (!float.IsNaN(boid.transform.position.x))
-            {
-                flockCenter += boid.transform.position;
-            }
+            flockCenter += boid.transform.position;
         }
-        flockCenter /= Mathf.Min(1, boids.Count);
+        flockCenter /= boids.Count;
         flockCenter -= transform.position;
         return flockCenter;
     }
@@ -135,15 +136,15 @@ public class BoidFlocking : MonoBehaviour
     private Vector3 CalcMatchVelocity()
     {
         Vector3 flockVelocity = Vector3.zero;
+        if (boids.Count == 0)
+        {
+            return flockVelocity;
+        }
         foreach (GameObject boid in boids)
         {
-            if (!float.IsNaN(boid.rigidbody.velocity.x))
-            {
-                flockVelocity += boid.rigidbody.velocity;
-            }
+            flockVelocity += boid.rigidbody.velocity;
         }
-        flockVelocity /= Mathf.Min(1, boids.Count);
-        flockVelocity -= rigidbody.velocity;
+        flockVelocity /= boids.Count;
         flockVelocity /= 8;
         return flockVelocity;
     }
