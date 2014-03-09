@@ -93,14 +93,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d118ca7f4c560574682cb42e3c2e1bf2, type: 3}
+  m_Script: {fileID: 11500000, guid: 6db72f7461291da4b9a6509ca2b6184c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   minVelocity: 5
-  maxVelocity: 20
+  maxVelocity: 50
+  pullForce: 1
   randomness: 1
-  range: 50
-  updateInterval: .200000003
+  flockRange: 10
+  flockSize: 15
+  updateInterval: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

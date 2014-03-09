@@ -4,10 +4,7 @@
 Temp/
 Obj/
 UnityGenerated/
-/Library/FailedAssetImports.txt
-/Library/cache/
-/Library/previews/
-/Library/ScriptAssemblies
+Library/
  
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
@@ -22,7 +19,6 @@ ExportedObj/
 *.user
 *.unityproj
 *.booproj
-*.meta
  
 # ============ #
 # OS generated #
